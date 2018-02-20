@@ -1,0 +1,112 @@
+
+#### Questions ####
+
+> Write out a generic SELECT statement.
+
+SELECT <column1, column2, ... *>
+FROM <table1, table2 ...>
+<optional: WHERE <condition>>;
+
+> Create a fun way to remember the order of operations in a SELECT statement, such as a mnemonic.
+
+A: SEven FRiendly WHales
+
+> Create a pets database. Create a dogs table using this file. From the dogs table with the columns id, name, gender, age, weight, intake_date, breed, and in_foster, write statements to select the following pieces of data.
+
+> Display the name, gender, and age of all dogs that are part Labrador.
+
+A: SELECT name, gender, age FROM dogs WHERE breed LIKE '%labrador%';
+
+> Display the ids of all dogs that are under 1 year old.
+
+A: SELECT id FROM dogs WHERE age < 1;
+
+> Display the name and age of all dogs that are female and over 35lbs.
+
+A: SELECT name, age FROM dogs WHERE gender='F' AND weight > 35;
+
+> Display all of the information about all dogs that are not Shepherd mixes.
+
+A: SELECT * FROM dogs WHERE breed NOT LIKE '%shepherd%';
+
+> Display the id, age, weight, and breed of all dogs that are either over 60lbs or Great Danes.
+
+A: SELECT id, age, weight, breed FROM dogs WHERE weight > 60 OR breed='great dane';
+
+> Intake teams typically guess the breed of shelter dogs, so the breed column may have multiple words (for example, "Labrador Collie mix").
+
+> From the cats table below, what pieces of data would be returned from these queries?
+
+SELECT name, adoption_date FROM cats;
+
+  name   | adoption_date |     
+---------+----------------
+Mushi    |   2016-3-22
+Seashell |   
+Azul     |	 2016-04-17
+Victoire |
+Nala     |	 2016-09-01
+
+SELECT name, age FROM cats;
+
+  name   | age |     
+---------+------
+Mushi    |  1
+Seashell |  7
+Azul     |	3
+Victoire |  7
+Nala     |	1
+
+
+> From the cats table, write queries to select the following pieces of data.
+Display all the information about all of the available cats.
+
+A: SELECT * FROM cats WHERE adoption_date IS NULL;
+
+> Choose one cat of each age to show to potential adopters.
+
+A: SELECT id, name FROM cats WHERE name='Mushi' OR name='Seashell' OR name='Azul' OR name='Victoire';
+Is there an easy way to do this using distinct keyword, google said not.
+
+> Find all of the names of the cats, so you don’t choose duplicate names for new cats.
+
+A: SELECT DISTINCT name FROM cats;
+
+> List each comparison operator and explain, in your own words, when you would use it. Include a real world example for each.
+
+< : to return values where a field is below a certain number, e.g. to return people in a DB with less than $10 in their bank account
+> : to return values where a field is is above a certain number, e.g to return all types of animal with more than 2 legs
+<= : to check when a value is less than or equal to a certain number, e.g. to return all children in a database aged 12 and under
+>= : to check when a value is greater than or equal to a certain number, e.g. to return all legal adults in a database aged 18 and above
+= : to check when a value is equal to a specific string, e.g. to return all people whose name is 'Matthew'
+<> or != : to exclude a value of a field from selected results, e.g. to exclude al customers where they have paid a bill, to send reminder letters to the rest.
+LIKE: to find all Star Trek episodes in a database of all tv episodes could to episode_name LIKE '%Star Trek%'
+BETWEEN: When you want to return customers in a db with between dress size between 8 and 12 to tell them about a new range of clothes designed for them
+IS DISTINCT FROM: when you want to check for nulls in a database separately to 0s
+IS TRUE/FALSE: when you want to find people who have not paid for a service 
+IS NULL: when you want to find entries in the db where customers have not filled out their names
+AND: when you want to get customer entries where they are called "Matthew" AND their surname is "Jackson"
+OR: when you want to get values of customers called "Matthew" OR whose surname is "Jackson"
+NOT: when you want to return people whose name is not "Matthew"
+
+
+> From the cats table below, what data would be returned from these queries?
+SELECT name FROM cats WHERE gender = ‘F’;
+
+name 
+Seashell
+Nala
+
+SELECT name FROM cats WHERE age <> 3;
+
+name
+Mushi
+Seashell
+Victoire
+Nala
+
+SELECT ID FROM cats WHERE name != ‘Mushi’ AND gender = ‘M’;
+
+id
+00003
+00004
