@@ -1,0 +1,216 @@
+#### Questions ####
+
+> How do you find data held in two separate data tables?
+
+A: By JOINing the tables together
+
+> Explain, in your own words, the difference between an INNER JOIN, LEFT OUTER JOIN, and RIGHT OUTER JOIN. Give a real-world example for each.
+
+INNER JOIN - selects database entries that have matching records in both tables. 
+Example: I want to find only customers with a budgie from a list of all the pets and species table
+
+LEFT OUTER JOIN - also known as LEFT JOIN, returns all records from the left table (table1) and the matched records from the right table (table2). The result on the right side is NULL if there is no match. For example if I want to find out which employees do not have children from a join between employees and children tables
+
+RIGHT OUTER JOIN - also known as RIGHT JOIN, returns all records from the right table (table2) and the matched records from the left table. If there is no match from the left side then the result is NULL. You could use it if you want to return only pet shop customers with budgies who also drive a Ford Fiesta joining customer, pet and car tables.  In practice I don't really imagine myself using such a join regularly.
+
+> Define primary key and foreign key. Give a real-world example for each.
+
+Primary key: fields to uniquely identify all the table's entries (rows). Primary key could be an id in a customer table
+
+Foreign key: field or collection of fields in one table that non-uniquely refer to the primary key of another column. A foreign key could be an customer id that is stored in an orders table.
+
+> Define aliasing.
+
+A: The creation of short variable names (generally one letter) to replace table names when writing SQL queries.
+
+
+> Change this query so that you are using aliasing:
+SELECT professor.name, compensation.salary,
+compensation.vacation_days FROM professor JOIN
+compensation ON professor.id =
+compensation.professor_id;
+
+
+SELECT p.name, c.salary, c.vacation_days 
+FROM professor AS p 
+JOIN compensation AS c
+ON p.id = c.professor_id;
+
+
+> Why would you use a NATURAL JOIN? Give a real-world example.
+
+A: When you want to join tables based on all of the shared columns without writing them out individually. 
+
+> Build an employees table and a shifts table with appropriate primary and foreign keys. Then, write queries to find the following information:
+
+CREATE TABLE employees (
+	id int PRIMARY KEY,
+	name text
+);
+
+CREATE TABLE shifts (
+	id int PRIMARY KEY,
+	shift varchar(255),
+	employee_id int REFERENCES employees(id)
+);
+
+> List all employees and all shifts.
+
+SELECT shifts.shift, employees.name
+FROM shifts
+JOIN employees
+ON shifts.employee_id = employees.id;
+
+
+> Given:
+ the dogs table:	  (id, name, gender, age, weight, intake_date, breed, in_foster)
+ the adoptions table  (id, adopter, cat, dog, fee, date) 
+ the adopters table   (id, first_name, last_name, address, phone_number)
+ the volunteers table (id, name, address, phone_number, available_to_foster, foster_id)
+ 
+ please write queries to retrieve the following information.
+
+> Create a list of all volunteers. If the volunteer is fostering a dog, include each dog as well.
+
+the volunteers table (id, name, address, phone_number, available_to_foster, foster_id)
+the dogs table:	     (id, name, gender, age, weight, intake_date, breed, in_foster)
+
+SELECT volunteers.name, dogs.name   
+FROM volunteers
+LEFT OUTER JOIN dogs 
+ON volunteers.foster_id = dogs.id;
+
+> List the adopter’s name and the pet’s name for each animal adopted within the past month to display as a ‘Happy Tail’ on social media.
+
+the adopters table   (id, first_name, last_name, address, phone_number)
+the adoptions table  (id, adopter, cat, dog, fee, date) 
+the dogs table:	     (id, name, gender, age, weight, intake_date, breed, in_foster)
+the cats table:      (id, name, gender, age, intake_date, adoption_date)
+
+SELECT adopters.name, cats.name, dogs.name 
+FROM adoptions
+LEFT OUTER JOIN adopters ON adoptions.adopter = adopters.id
+LEFT OUTER JOIN dogs ON adoptions.dog = dogs.id
+LEFT OUTER JOIN cats ON adoptions.cat = cats.id
+WHERE adoptions.date > dateadd(month,-1,getdate());
+
+> Create a list of adopters who have not yet chosen a dog to adopt.
+
+the adoptions table  (id, adopter, cat, dog, fee, date) 
+the adopters table   (id, first_name, last_name, address, phone_number)
+
+SELECT adopters.first_name, adopters.last_name 
+FROM adoptions
+LEFT OUTER JOIN adopters ON adoptions.adopter = adopters
+WHERE adoptions.dog = NULL;
+
+> Display a list of all cats and all dogs not yet adopted.
+
+the adoptions table  (id, adopter, cat, dog, fee, date)
+the dogs table:	     (id, name, gender, age, weight, intake_date, breed, in_foster)
+the cats table:      (id, name, gender, age, intake_date, adoption_date)
+
+SELECT dogs.name 
+FROM dogs
+LEFT OUTER JOIN adoptions ON dogs.id = adoptions.dog
+WHERE adoptions.dog IS NULL
+UNION
+SELECT cats.name
+FROM cats
+LEFT OUTER JOIN adoptions ON cats.id = adoptions.cat
+WHERE adoptions.cat IS NULL;
+
+> Write a query to find the name of the person who adopted Seashell given the tables Cats (depicted below), Adoptions (described below), and Adopters which has columns for id, address, phone number, and name.
+
+the adopters table   (id, first_name, last_name, address, phone_number)
+the adoptions table  (id, adopter, cat, dog, fee, date) 
+the cats table:      (id, name, gender, age, intake_date, adoption_date)
+
+SELECT adopters.first_name, adopters.last_name 
+FROM adoptions
+LEFT OUTER JOIN adopters ON adoptions.adopter = adopters.id
+LEFT OUTER JOIN cats ON adoptions.cat = cats.id
+WHERE cats.name = 'Seashell';
+
+> Given the tables 
+books (isbn, title, author)
+transactions (id, checked_out_date, checked_in_date, user_id, isbn)
+holds (id, isbn, user_id, rank, date)
+patrons (id, name, fine_amount)
+
+write queries to find the following information:
+
+> To discern if the library should buy more copies of a given book, please provide the names and position, in order, of all of the patrons waiting in line for Harry Potter and the Sorcerer’s Stone.
+
+holds (id, isbn, user_id, rank, date)
+patrons (id, name, fine_amount)
+
+SELECT patrons.name, holds.rank
+FROM holds
+JOIN patrons ON holds.user_id = patrons.id
+JOIN books ON holds.isbn = books.isbn
+WHERE books.title = 'Harry Potter and the Sorcerer\’s Stone'
+ORDER BY holds.rank ASC;
+
+> Make a list of all book titles and denote whether or not a copy of that book is checked out.
+
+books (isbn, title, author)
+transactions (id, checked_out_date, checked_in_date, user_id, isbn)
+
+CREATE TABLE books (isbn int, title text, author text);
+INSERT INTO books VALUES
+(12345, 'Book1', 'Terry P'),
+(23456, 'Book2', 'Amanda D')
+
+CREATE TABLE transactions (id int, checked_out_date date, checked_in_date date, user_id int, isbn int)
+INSERT INTO transactions VALUES
+(1, '01/01/2018', '03/01/2018', 1, 12345),
+(2, '03/01/2018', '04/01/2018', 2, 12345),
+(3, '02/02/2018', NULL, 3, 23456),
+(4, '05/02/2018', '06/02/2018', 4, 23456);
+
+SELECT books.title, 
+SUM(CASE WHEN transactions.checked_in_date IS NOT NULL THEN 0 ELSE 1 END) AS checked_out 
+FROM transactions
+LEFT OUTER JOIN books
+ON transactions.isbn = books.isbn
+GROUP BY books.title
+
+
+> To learn which books take longer to read, the librarians would like you to create a list of total checked out time by book name in the past month.
+
+books (isbn, title, author)
+transactions (id, checked_out_date, checked_in_date, user_id, isbn)
+
+SELECT books.title, DATEDIFF (transactions.checked_out_date, transactions.checked_in_date) AS checked_out_days
+FROM transactions 
+LEFT OUTER JOIN books
+ON books.isbn = transactions.isbn
+WHERE transactions.checked_in_date IS NOT NULL AND transactions.checked_out_date >= dateadd(day,-30,getdate())
+GROUP BY books.title
+ORDER BY checked_out_days;
+
+> To learn which items should be retired, make a list of all books that have not been checked out in the past five years.
+
+books (isbn, title, author)
+transactions (id, checked_out_date, checked_in_date, user_id, isbn)
+
+SELECT books.title 
+FROM transactions
+JOIN books
+ON transactions.isbn = books.isbn
+WHERE transactions.checked_in_date >= dateadd(year,-5,getdate());
+
+
+> List all of the library patrons. If they have one or more books checked out, correspond the books to the patrons.
+
+books (isbn, title, author)
+transactions (id, checked_out_date, checked_in_date, user_id, isbn)
+patrons (id, name, fine_amount)
+
+SELECT patrons.name,  books.title 
+FROM transactions
+JOIN books ON transactions.isbn = books.isbn
+JOIN patrons ON transactions.user_id = patrons.id
+WHERE checked_in_date IS NULL
+GROUP BY patrons.name;
