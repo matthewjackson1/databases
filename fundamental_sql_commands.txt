@@ -87,7 +87,7 @@ VALUES
 
 > Say that someone has just checked out one of the books. Change the available copies column to 1 less.
 
-A: UPDATE books SET num_available=4 WHERE isbn=9780091929787;
+A: UPDATE books SET num_available=num_available-1 WHERE isbn=9780091929787;
 
 > Now one of the books has been added to the banned books list. Remove it from the table.
 
