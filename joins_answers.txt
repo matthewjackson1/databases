@@ -195,11 +195,12 @@ ORDER BY checked_out_days;
 books (isbn, title, author)
 transactions (id, checked_out_date, checked_in_date, user_id, isbn)
 
-SELECT books.title 
+SELECT books.title, MAX(transactions.checked_out_date) AS last_checkout_date 
 FROM transactions
 JOIN books
 ON transactions.isbn = books.isbn
-WHERE transactions.checked_in_date >= dateadd(year,-5,getdate());
+WHERE last_checkout_date < dateadd(year,-5,getdate())
+GROUP BY books.title;
 
 
 > List all of the library patrons. If they have one or more books checked out, correspond the books to the patrons.
